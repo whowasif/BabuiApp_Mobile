@@ -1,0 +1,604 @@
+[
+  { "type": "header", "version": "4.8.5", "comment": "Export to JSON plugin for PHPMyAdmin" },
+  { "type": "database", "name": "bd_geo_code" },
+  { "type": "table", "name": "upazilas", "database": "bd_geo_code", "data": [
+    {
+      "upazila_id": 495,
+      "district_id": 47,
+      "name": "Adabor",
+      "bn_name": "আদাবর",
+      "areas": ["Shyamoli", "Mohammodia Housing", "Bashila  ", "Japan Garden City", "Nobodoy Housing", "Pisciculture Housing", "Shekhertek", "Adarsha Chayanir", "Akkas Housing", "Unique Housing", "Mehedibag Housing"],
+      "bn_areas": ["শ্যামলী", "মোহাম্মদিয়া হাউজিং", "বসিলা   ", "জাপান গার্ডেন সিটি", "নবোদয় হাউজিং", "পিসিকালচার হাউজিং", "শেখেরটেক", "আদর্শ ছায়ানীড়", "আক্কাস হাউজিং", "ইউনিক হাউজিং", "মেহেদিবাগ হাউজিং"]
+    },
+    {
+      "upazila_id": 538,
+      "district_id": 47,
+      "name": "Airport",
+      "bn_name": "বিমানবন্দর",
+      "areas": ["Kawla", "Ashkona", "Airport Cargo Area", "Sector-1 Uttara  ", "Flyover Colony", "Visitor Housing Colony"],
+      "bn_areas": ["কাওলা", "আশকোনা", "বিমানবন্দর কার্গো এলাকা", "সেক্টর-১ উত্তরা   ", "ফ্লাইওভার কলোনি", "ভিজিটর হাউজিং কলোনি"]
+    },
+    {
+      "upazila_id": 496,
+      "district_id": 47,
+      "name": "Badda",
+      "bn_name": "বাড্ডা",
+      "areas": ["Middle Badda", "North Badda", "South Badda", "Aftobanagar", "Mahakhali DHOES  ", "Satarkhuli", "Tekpara", "Rupnagar Tinshhed", "Sonakatar", "Bawaliapara", "Pukurpara"],
+      "bn_areas": ["মধ্য বাড্ডা", "উত্তর বাড্ডা", "দক্ষিণ বাড্ডা", "আফতাবনগর", "মহাখালী ডিওএইচএস   ", "সাতারকুল", "টেকপাড়া", "রূপনগর টিনশেড", "সোনাকাত্রা", "বাওয়ালিপাড়া", "পুকুরপাড়া"]
+    },
+    {
+      "upazila_id": 539,
+      "district_id": 47,
+      "name": "Banani",
+      "bn_name": "বনানী",
+      "areas": [
+        "Banani DHOES",
+        "Banani Block A",
+        "Banani Block B",
+        "Banani Block C",
+        "Banani Block D",
+        "Banani Block E",
+        "Banani Block F",
+        "Banani Block G",
+        "Banani Block H",
+        "Banani Block I",
+        "Banani Block J",
+        "Niketon",
+        "Karai",
+        "Cheyeraman Bari",
+        "Banani Comarshila Area",
+        "Seven Tola Housing",
+        "Koloni-21",
+        "Brijel Koloni"
+      ],
+      "bn_areas": [
+        "বনানী ডিওএইচএস",
+        "বনানী ব্লক A",
+        "বনানী ব্লক B",
+        "বনানী ব্লক C",
+        "বনানী ব্লক D",
+        "বনানী ব্লক E",
+        "বনানী ব্লক F",
+        "বনানী ব্লক G",
+        "বনানী ব্লক H",
+        "বনানী ব্লক I",
+        "বনানী ব্লক J",
+        "নিকেতন",
+        "করাইল",
+        "চেয়ারম্যান বাড়ি",
+        "বনানী কমার্শিয়াল এলাকা",
+        "সাত তলা হাউজিং",
+        "কলোনি-২১",
+        "ব্রিজেল কলোনি"
+      ]
+    },
+    {
+      "upazila_id": 497,
+      "district_id": 47,
+      "name": "Bangshal",
+      "bn_name": "বংশাল",
+      "areas": ["Bangshal", "Bangshal Len", "Bangla Bazar", "Malitola", "Majed Surdaar Road", "Sharot Chandra Chakraborty Road", "Shahid Salauddin Koloni"],
+      "bn_areas": ["বংশাল", "বংশাল লেন", "বাংলাবাজার", "মালিতোলা", "মাজেদ সরদার রোড", "শরৎচন্দ্র চক্রবর্তী রোড", "শহীদ সালাউদ্দিন কলোনি"]
+    },
+    {
+      "upazila_id": 499,
+      "district_id": 47,
+      "name": "Bhashantek",
+      "bn_name": "ভাষানটেক",
+      "areas": ["Bhashantek", "Alubdirtak", "Baygarak", "Lalarsi", "Balughat", "Matikata", "Drish Fish Ponda Koloni", "Shrestha Abashon Sekhson"],
+      "bn_areas": ["ভাষানটেক", "আলুব্দীরটেক", "বাইগারটেক", "লালারসই", "বালুঘাট", "মাটিকাটা", "ড্রি ফিশ পন্ড কলোনি", "শ্রেষ্ঠ আবাসন সেকশন"]
+    },
+    {
+      "upazila_id": 500,
+      "district_id": 47,
+      "name": "Cantonment",
+      "bn_name": "ক্যান্টনমেন্ট",
+      "areas": ["Senani Basha", "ISPAAR Area", "Kurmitola", "Senik Koloni", "Armi Stadium Area", "Golfer Club Koloni", "Brij Road Abashon Sekhson"],
+      "bn_areas": ["সেনানিবাস কলোনি", "আইএসপিআর এলাকা", "কুর্মিটোলা", "সৈনিক কলোনি", "আর্মি স্টেডিয়াম এলাকা", "গল্ফ ক্লাব কলোনি", "ব্রিজ রোড আবাসিক সেকশন"]
+    },
+    {
+      "upazila_id": 501,
+      "district_id": 47,
+      "name": "Chackbazar",
+      "bn_name": "চকবাজার",
+      "areas": ["Chackbazar", "Islambag", "Husaini Dala", "Bara Katar", "Choto Katar", "Dakkeshwar Bari Morisharir Paribarti Area", "Murarkuli Koloni"],
+      "bn_areas": ["চকবাজার", "ইসলামবাগ", "হুসাইনী দালান", "বড় কাটরা", "ছোট কাটরা", "ঢাকেশ্বরী মন্দির পার্শ্ববর্তী এলাকা", "মুরারকলি কলোনি"]
+    },
+    {
+      "upazila_id": 540,
+      "district_id": 47,
+      "name": "Dakshin Khan",
+      "bn_name": "দক্ষিণ খান",
+      "areas": ["Dakshin Khan", "Ashiyana City", "Sonar Khola", "Gaowaiir", "Ajmupur  ", "Holan", "Anol", "Jamun Kata", "Baruwa Koloni"],
+      "bn_areas": ["দক্ষিণ খান", "আশিয়ান সিটি", "সোনারখোলা", "গাওয়াইর", "আজমপুর   ", "হোলান", "আনোল", "জামুন কাটার", "বরুয়া কলোনি"]
+    },
+    {
+      "upazila_id": 502,
+      "district_id": 47,
+      "name": "Darus-Salam",
+      "bn_name": "দারুস সালাম",
+      "areas": ["Gobatli", "Majar Road", "Paikepara", "Kolyaan", "Darus Salam Road", "Geaidarak", "Beten Nagar", "Jozurabad", "Ashkonatrasht Koloni"],
+      "bn_areas": ["গাবতলী", "মাজার রোড", "পাইকপাড়া", "কল্যাণপুর", "দারুস সালাম রোড", "গেইডারটেক", "বেতেন নগর", "জহুরাবাদ", "আশকোনা ট্রাস্ট কলোনি"]
+    },
+    {
+      "upazila_id": 503,
+      "district_id": 47,
+      "name": "Demra",
+      "bn_name": "ডেমরা",
+      "areas": ["Demra", "Matuya", "Amulia", "Saraili", "Rasulabag", "Bayitul Ammaan Mosque Area", "Demra DHOES", "Fishers Koloni"],
+      "bn_areas": ["ডেমরা", "মাতুয়াইল", "আমুলিয়া", "সারালিয়া   ", "রাসুলাবাগ", "বাইতুল আমান মসজিদ এলাকা", "ডেমরা ডিএইচএস", "ফিশারি কলোনি"]
+    },
+    {
+      "upazila_id": 504,
+      "district_id": 47,
+      "name": "Dhanmondi",
+      "bn_name": "ধানমন্ডি",
+      "areas": [
+        "Dhanmondi Sekhson-2",
+        "Dhanmondi Sekhson-3",
+        "Dhanmondi Sekhson-4",
+        "Dhanmondi Sekhson-5",
+        "Dhanmondi Sekhson-6",
+        "Dhanmondi Sekhson-7",
+        "Dhanmondi Sekhson-8",
+        "Dhanmondi Sekhson-9",
+        "Dhanmondi Sekhson-10",
+        "Dhanmondi Sekhson-11",
+        "Dhanmondi Sekhson-12",
+        "Dhanmondi Sekhson-13",
+        "Dhanmondi Sekhson-14",
+        "Dhanmondi Sekhson-15",
+        "Satmasjid Road",
+        "Royerbazar  ",
+        "Central Mosque Area",
+        "Shobhanbazar",
+        "Sobujbazar Housing"
+      ],
+      "bn_areas": [
+        "ধানমন্ডি সেকশন-২",
+        "ধানমন্ডি সেকশন-৩",
+        "ধানমন্ডি সেকশন-৪",
+        "ধানমন্ডি সেকশন-৫",
+        "ধানমন্ডি সেকশন-৬",
+        "ধানমন্ডি সেকশন-৭",
+        "ধানমন্ডি সেকশন-৮",
+        "ধানমন্ডি সেকশন-৯",
+        "ধানমন্ডি সেকশন-১০",
+        "ধানমন্ডি সেকশন-১১",
+        "ধানমন্ডি সেকশন-১২",
+        "ধানমন্ডি সেকশন-১৩",
+        "ধানমন্ডি সেকশন-১৪",
+        "ধানমন্ডি সেকশন-১৫",
+        "সাতমসজিদ রোড",
+        "রায়েরবাজার   ",
+        "কেন্দ্রীয় মসজিদ এলাকা",
+        "শোভনবাগ",
+        "সবুজবাগ হাউজিং"
+      ]
+    },
+    {
+      "upazila_id": 505,
+      "district_id": 47,
+      "name": "Gandaria",
+      "bn_name": "গেন্ডারিয়া",
+      "areas": ["Gandaria", "Poshtgol", "Kodamrul Jamer Mosque Area", "Murghitola", "Dhopkol", "Barandidi Koloni"],
+      "bn_areas": ["গেন্ডারিয়া", "পোস্তগোলা   ", "কদমরসুল জামে মসজিদ এলাকা", "মুর্গীতোলা", "ধুপখোলা", "বারানদী কলোনি"]
+    },
+    {
+      "upazila_id": 506,
+      "district_id": 47,
+      "name": "Gulshan",
+      "bn_name": "গুলশান",
+      "areas": ["Gulshan-1", "Gulshan-2", "Niketon", "Baridhara  ", "Sector 1", "Dipolomtik Jon", "Karai Salam (Maximum)", "Lekhsaid Abashon"],
+      "bn_areas": ["গুলশান-১", "গুলশান-২", "নিকেতন", "বারিধারা   ", "সার্কেল ১", "ডিপ্লোম্যাটিক জোন", "করাইল স্লাম (বৃহত্তম)", "লেকসাইড আবাসন"]
+    },
+    {
+      "upazila_id": 541,
+      "district_id": 47,
+      "name": "Hatirjheel",
+      "bn_name": "হাতিরঝিল",
+      "areas": ["Magbazar Koloni", "Bor Magbazar", "Hatirjheel Prokash Area", "Pyan Pasifik Sonagor Road", "Shahinbazar", "Reinbo Krushi"],
+      "bn_areas": ["মগবাজার কলোনি", "বড় মগবাজার", "হাতিরঝিল প্রকল্প এলাকা", "প্যান প্যাসিফিক সোনারগাঁও রোড", "শাহীনবাগ", "রেইনবো ক্রসিং"]
+    },
+    {
+      "upazila_id": 507,
+      "district_id": 47,
+      "name": "Hazaribagh",
+      "bn_name": "হাজারীবাগ",
+      "areas": ["Hazaribagh", "Gajmohl Tanari Area", "Bashila  ", "Royerbazar  ", "Jigatala", "Nimuzom Abashon Area"],
+      "bn_areas": ["হাজারীবাগ", "গজমহল টানারি এলাকা", "বসিলা   ", "রায়েরবাজার   ", "জিগাতলা", "নিঝুম আবাসিক এলাকা"]
+    },
+    {
+      "upazila_id": 508,
+      "district_id": 47,
+      "name": "Jattrabari",
+      "bn_name": "যাত্রাবাড়ী",
+      "areas": ["Jattarabari", "Matuya", "Kajla", "Dholapara", "Dalpura", "Saida", "Kutubkhal"],
+      "bn_areas": ["যাত্রাবাড়ী", "মাতুয়াইল", "কাজলা", "ধোলাইপারা", "দলপুর", "সাইদাবাদ", "কুতুবখালী (দক্ষিণ যাত্রাবাড়ী)"]
+    },
+    {
+      "upazila_id": 509,
+      "district_id": 47,
+      "name": "Kadamtoli",
+      "bn_name": "কদমতলী",
+      "areas": ["Kadamtoli", "Dhania", "Shyampur  ", "Dholapara", "Kutubkhal", "Shekherdi", "Jontabazar"],
+      "bn_areas": ["কদমতলী", "ধানিয়া", "শ্যামপুর   ", "ধোলাইখাল", "কুতুবখালী", "শেখদি", "জনতাবাগ"]
+    },
+    {
+      "upazila_id": 510,
+      "district_id": 47,
+      "name": "Kafrul",
+      "bn_name": "কাফরুল",
+      "areas": ["Kafrul (North/South/West)", "Ibrahimpur", "Kacchukshhet", "Mirpur-10  ", "Agargaon  ", "DHOES Koloni"],
+      "bn_areas": ["কাফরুল (উত্তর/দক্ষিণ/পশ্চিম)", "ইব্রাহিমপুর", "কচুক্ষেত", "মিরপুর-১০   ", "আগারগাঁও   ", "ডিওএইচএস কলোনি"]
+    },
+    {
+      "upazila_id": 511,
+      "district_id": 47,
+      "name": "Kalabagan",
+      "bn_name": "কালাবাগান",
+      "areas": ["Kalabagan", "Panthapath  ", "Cricket Academy Area", "Bayitush Salah", "City College Koloni"],
+      "bn_areas": ["কালাবাগান", "পান্থপথ   ", "ক্রিকেট একাডেমি এলাকা", "বায়তুস সালাহ", "সিটি কলেজ কলোনি"]
+    },
+    {
+      "upazila_id": 512,
+      "district_id": 47,
+      "name": "Kamrangirchar",
+      "bn_name": "কামরাঙ্গীরচর",
+      "areas": ["Kamrangirchar", "Royerbazar  ", "Motabar Bazar", "Ashrafabad", "Bidyanondo Koloni"],
+      "bn_areas": ["কামরাঙ্গীরচর", "রায়েরবাজার   ", "মতব্বর বাজার", "আশরাফাবাদ", "বিদ্যুৎ কলোনি"]
+    },
+    {
+      "upazila_id": 513,
+      "district_id": 47,
+      "name": "Khilgaon",
+      "bn_name": "খিলগাঁও",
+      "areas": ["Khilgaon", "Tilapapa", "Gora", "Chowdhuripapa", "Talatala Bazar Area", "Banashree  ", "Meradia"],
+      "bn_areas": ["খিলগাঁও", "তিলপাপাড়া", "গোড়ান", "চৌধুরীপাড়া", "তালতোলা বাজার এলাকা", "বানাশ্রী   ", "মেরাদিয়া"]
+    },
+    {
+      "upazila_id": 514,
+      "district_id": 47,
+      "name": "Khilkhet",
+      "bn_name": "খিলক্ষেত",
+      "areas": ["Khilkhet", "Nikunjo-1 & 2", "Dumoni", "Moshtul", "Talna", "Delna"],
+      "bn_areas": ["খিলক্ষেত", "নিকুঞ্জ-১ ও ২", "ডুমনি", "মোস্তুল", "তালনা", "দেলনা"]
+    },
+    {
+      "upazila_id": 515,
+      "district_id": 47,
+      "name": "Kotwali",
+      "bn_name": "কোতোয়ালী",
+      "areas": ["Kotwali", "Bahadur Shah Park", "Nababpur", "Tantee Bazar", "Debi Ghat", "Babu Ghat"],
+      "bn_areas": ["কোতোয়ালী", "বাহাদুর শাহ পার্ক", "নবাবপুর", "তাঁতী বাজার", "দেবী ঘাট", "বাবুঘাট"]
+    },
+    {
+      "upazila_id": 516,
+      "district_id": 47,
+      "name": "Lalbagh",
+      "bn_name": "লালবাগ",
+      "areas": ["Lalbagh", "Ajimpur  ", "Armaniitola", "Shahid Nagar", "Lalbagh Fort Area"],
+      "bn_areas": ["লালবাগ", "আজিমপুর   ", "আরমানিটোলা", "শহীদনগর", "লালবাগ ফোর্ট এলাকা"]
+    },
+    {
+      "upazila_id": 542,
+      "district_id": 47,
+      "name": "Mirpur Model",
+      "bn_name": "মিরপুর মডেল",
+      "areas": [
+        "Mirpur Section 1",
+        "Mirpur Section 2",
+        "Mirpur Section 6",
+        "Mirpur Section 7",
+        "Mirpur Section 10  ",
+        "Mirpur Section 11  ",
+        "Mirpur Section 12  ",
+        "Mirpur Section 13  ",
+        "Mirpur Section 14  ",
+        "Rupnagar Abashon",
+        "Palashbazar",
+        "Bishottak",
+        "Tinshed"
+      ],
+      "bn_areas": [
+        "মিরপুর সেকশন ১",
+        "মিরপুর সেকশন ২",
+        "মিরপুর সেকশন ৬",
+        "মিরপুর সেকশন ৭",
+        "মিরপুর সেকশন ১০   ",
+        "মিরপুর সেকশন ১১   ",
+        "মিরপুর সেকশন ১২   ",
+        "মিরপুর সেকশন ১৩   ",
+        "মিরপুর সেকশন ১৪   ",
+        "রূপনগর আবাসিক",
+        "পলাশনগর",
+        "বাইশটেকী",
+        "টিনসেড"
+      ]
+    },
+    {
+      "upazila_id": 518,
+      "district_id": 47,
+      "name": "Mohammadpur",
+      "bn_name": "মোহাম্মদপুর",
+      "areas": ["Mohammadpur", "Lalmatia", "Shyamoli  ", "Bashila  ", "Japan Garden City", "Pisciculture", "Kaderabad Housing"],
+      "bn_areas": ["মোহাম্মদপুর", "লালমাটিয়া", "শ্যামলী   ", "বসিলা   ", "জাপান গার্ডেন সিটি", "পিসিকালচার", "কাদেরাবাদ হাউজিং"]
+    },
+    {
+      "upazila_id": 519,
+      "district_id": 47,
+      "name": "Motijheel",
+      "bn_name": "মতিঝিল",
+      "areas": ["Motijheel", "Arambag", "Dilkusha", "Shapla Chattar", "Jiro Point", "Bangla Market Koloni"],
+      "bn_areas": ["মতিঝিল", "আরামবাগ", "দিলকুশা", "শাপলা চত্বর", "জিরো পয়েন্ট", "বাংলামটর কলোনি"]
+    },
+    {
+      "upazila_id": 520,
+      "district_id": 47,
+      "name": "Mugda",
+      "bn_name": "মুগদা",
+      "areas": ["Mugda", "Komola", "Mandinka", "Madina", "Basabo  ", "Green Model Town", "Khalpara", "Jhilpara"],
+      "bn_areas": ["মুগদা", "কমলাপুর", "মণিকনগর", "মদিনাবাগ", "বাসাবো   ", "গ্রিন মডেল টাউন", "খালপাড়া", "ঝিলপাড়া"]
+    },
+    {
+      "upazila_id": 521,
+      "district_id": 47,
+      "name": "New Market",
+      "bn_name": "নিউ মার্কেট",
+      "areas": ["New Market", "Ajimpur  ", "Nilkhet", "Chandni Chok", "Pilkhana Koloni"],
+      "bn_areas": ["নিউ মার্কেট", "আজিমপুর   ", "নীলক্ষেত", "চাঁদনী চক", "পিলখানা কলোনি"]
+    },
+    {
+      "upazila_id": 522,
+      "district_id": 47,
+      "name": "Pallabi",
+      "bn_name": "পল্লবী",
+      "areas": ["Mirpur-12", "Exstation Pallabi", "New Pallabi Sekhson-6", "Milkhubvi Road", "Dwaripara", "Rupnagar Tinshhed", "Harunabad"],
+      "bn_areas": ["মিরপুর-১২", "এক্সটেনশন পল্লবী", "নিউ পল্লবী সেকশন-৬", "মিল্কভিটা রোড", "দুয়ারীপাড়া", "রূপনগর টিনশেড", "হরুনাবাদ"]
+    },
+    {
+      "upazila_id": 543,
+      "district_id": 47,
+      "name": "Paltan Model",
+      "bn_name": "পল্টন মডেল",
+      "areas": ["Paltan", "Bijon Nagar", "Fokirara Pul", "Purana Paltan", "Nayapaltan", "Topkhana", "Rajabazar"],
+      "bn_areas": ["পল্টন", "বিজয়নগর", "ফকিরাপুল", "পুরানা পল্টন", "নয়া পল্টন", "তোপখানা", "রাজারবাগ"]
+    },
+    {
+      "upazila_id": 544,
+      "district_id": 47,
+      "name": "Ramna Model",
+      "bn_name": "রমনা মডেল",
+      "areas": ["Ramna", "Shahbag  ", "Sahabazar", "Segunbagi", "Mochak", "Bawbaz"],
+      "bn_areas": ["রমনা", "শাহবাগ   ", "কাওরান বাজার   ", "সেগুনবাগিচা", "মৌচাক", "বউবাজার"]
+    },
+    {
+      "upazila_id": 525,
+      "district_id": 47,
+      "name": "Rampura",
+      "bn_name": "রামপুরা",
+      "areas": ["Rampura", "Banashree", "Aftobanagar (Jahurul Islam City)", "Hatirjheel  ", "Meradia Hat"],
+      "bn_areas": ["রামপুরা", "বনশ্রী", "আফতাবনগর (জাহুরুল ইসলাম সিটি)", "হাতিরঝিল   ", "মেরাদিয়া হাট"]
+    },
+    {
+      "upazila_id": 545,
+      "district_id": 47,
+      "name": "Rupnagar",
+      "bn_name": "রূপনগর",
+      "areas": ["Rupnagar", "Shiyalbar", "Mirpur-3  ", "Rupnagar Abashon", "Chayanir Koloni"],
+      "bn_areas": ["রূপনগর", "শিয়ালবাড়ি", "মিরপুর-৩ ", "রূপনগর আবাসিক", "চায়ানীর কলোনি"]
+    },
+    {
+      "upazila_id": 526,
+      "district_id": 47,
+      "name": "Sabujbag",
+      "bn_name": "সবুজবাগ",
+      "areas": ["Sobujbag", "Basabo", "Madaraktek", "Komola", "Thakurpara"],
+      "bn_areas": ["সবুজবাগ", "বাসাবো", "মাদারটেক", "কমলাপুর", "থাকুরপাড়া"]
+    },
+    {
+      "upazila_id": 527,
+      "district_id": 47,
+      "name": "Shah Ali",
+      "bn_name": "শাহ আলী",
+      "areas": ["Shah Ali", "Mirpur 1", "Mirpur 11", "Mirpur 12  "],
+      "bn_areas": ["শাহ আলী", "মিরপুর ১", "মিরপুর ১১", "মিরপুর ১২   "]
+    },
+    {
+      "upazila_id": 528,
+      "district_id": 47,
+      "name": "Shahbag",
+      "bn_name": "শাহবাগ",
+      "areas": ["Shahbag", "Supreme Court Area", "Bangla Academy Area", "Dhaka University Area"],
+      "bn_areas": ["শাহবাগ", "সুপ্রিম কোর্ট এলাকা", "বাংলা একাডেমি এলাকা", "ঢাকা বিশ্ববিদ্যালয় এলাকা"]
+    },
+    {
+      "upazila_id": 546,
+      "district_id": 47,
+      "name": "Shahjahanpur",
+      "bn_name": "শাহজাহানপুর",
+      "areas": ["Shahjahanpur", "Komolapur  ", "Gulbag", "Shahid Nagar"],
+      "bn_areas": ["শাহজাহানপুর", "কমলাপুর ", "গুলবাগ", "শহীদবাগ"]
+    },
+    {
+      "upazila_id": 547,
+      "district_id": 47,
+      "name": "Sher-e-Bangla Nagar",
+      "bn_name": "শেরেবাংলা নগর",
+      "areas": ["Sher-e-Bangla Nagar", "Agargaon", "Sansad Bhaban Area", "Ganabhaban Area", "Sukrabad"],
+      "bn_areas": ["শেরেবাংলা নগর", "আগারগাঁও", "সংসদ ভবন এলাকা", "গণভবন এলাকা", "সুক্রাবাদ"]
+    },
+    {
+      "upazila_id": 529,
+      "district_id": 47,
+      "name": "Shyampur",
+      "bn_name": "শ্যামপুর",
+      "areas": ["Shyampur", "Alibazar", "Niu Jurain", "Poshtgol  "],
+      "bn_areas": ["শ্যামপুর", "আলীবহর", "নিউ জুরাইন", "পোস্তগোলা   "]
+    },
+    {
+      "upazila_id": 530,
+      "district_id": 47,
+      "name": "Sutrapur",
+      "bn_name": "সুত্রাপুর",
+      "areas": ["Sutrapur", "Tikatuli", "Gandaria  "],
+      "bn_areas": ["সুত্রাপুর", "টিকাটুলি", "গেন্ডারিয়া   "]
+    },
+    {
+      "upazila_id": 531,
+      "district_id": 47,
+      "name": "Tejgaon",
+      "bn_name": "তেজগাঁও",
+      "areas": ["Tejgaon", "Farmergate  ", "Karann Bazar  "],
+      "bn_areas": ["তেজগাঁও", "ফার্মগেট   ", "কাওরান বাজার   "]
+    },
+    {
+      "upazila_id": 532,
+      "district_id": 47,
+      "name": "Tejgaon Industrial",
+      "bn_name": "তেজগাঁও শিল্প এলাকা",
+      "areas": ["Tejgaon Industrial", "Karowaa Bazar  "],
+      "bn_areas": ["তেজগাঁও শিল্প এলাকা", "কারওয়ান বাজার   "]
+    },
+    {
+      "upazila_id": 533,
+      "district_id": 47,
+      "name": "Turag",
+      "bn_name": "টুরাগ",
+      "areas": ["Turag", "Abdulpur", "Ashulia  ", "Mirpur Sangram Basha"],
+      "bn_areas": ["টুরাগ", "আব্দুল্লাহপুর", "আশুলিয়া   ", "মিরপুর সেনানিবাসের পূর্ব পাশ"]
+    },
+    {
+      "upazila_id": 548,
+      "district_id": 47,
+      "name": "Uttar Khan",
+      "bn_name": "উত্তর খান",
+      "areas": ["Uttar Khan", "Kawla  ", "Uttar Khan Development Project"],
+      "bn_areas": ["উত্তর খান", "কাওলা   ", "উত্তর খান উন্নয়ন প্রকল্প"]
+    },
+    {
+      "upazila_id": 534,
+      "district_id": 47,
+      "name": "Uttara East",
+      "bn_name": "উত্তরা পূর্ব",
+      "areas": [
+        "Uttara Sector 1",
+        "Uttara Sector 2",
+        "Uttara Sector 3",
+        "Uttara Sector 4",
+        "Uttara Sector 5",
+        "Uttara Sector 6",
+        "Firuz Shah Road Koloni"
+      ],
+      "bn_areas": [
+        "উত্তরা সেক্টর ১",
+        "উত্তরা সেক্টর ২",
+        "উত্তরা সেক্টর ৩",
+        "উত্তরা সেক্টর ৪",
+        "উত্তরা সেক্টর ৫",
+        "উত্তরা সেক্টর ৬",
+        "ফিরোজ শাহ রোড কলোনি"
+      ]
+    },
+    {
+      "upazila_id": 535,
+      "district_id": 47,
+      "name": "Uttara West",
+      "bn_name": "উত্তরা পশ্চিম",
+      "areas": [
+        "Uttara Sector 7",
+        "Uttara Sector 8",
+        "Uttara Sector 9",
+        "Uttara Sector 10",
+        "Uttara Sector 11",
+        "Uttara Sector 12",
+        "Uttara Sector 13",
+        "Uttara Sector 14",
+        "Helipya Road Koloni"
+      ],
+      "bn_areas": [
+        "উত্তরা সেক্টর ৭",
+        "উত্তরা সেক্টর ৮",
+        "উত্তরা সেক্টর ৯",
+        "উত্তরা সেক্টর ১০",
+        "উত্তরা সেক্টর ১১",
+        "উত্তরা সেক্টর ১২",
+        "উত্তরা সেক্টর ১৩",
+        "উত্তরা সেক্টর ১৪",
+        "হেলিপ্যাড কলোনি"
+      ]
+    },
+    {
+      "upazila_id": 536,
+      "district_id": 47,
+      "name": "Vatara",
+      "bn_name": "ভাটারা",
+      "areas": ["Vatara", "Bosundhara Area", "Narda", "Baluar Ma", "Solma", "Shahjadapur", "Madhannarda", "Niton Bazar", "Kuril"],
+      "bn_areas": ["ভাটারা", "বসুন্ধরা আবাসিক এলাকা", "নর্দা", "বালুর মাঠ", "সোলমাই", "শাহজাদপুর", "মধ্যনর্দা", "নতুন বাজার", "কুড়িল"]
+    },
+    {
+      "upazila_id": 537,
+      "district_id": 47,
+      "name": "Wari",
+      "bn_name": "ওয়ারী",
+      "areas": ["Wari", "Tikatuli  ", "Gandaria  ", "Chingrimarket Koloni"],
+      "bn_areas": ["ওয়ারী", "টিকাটুলি   ", "গেন্ডারিয়া   ", "চিংড়িমার্কেট কলোনি"]
+    },
+    {
+      "upazila_id": 365,
+      "district_id": 47,
+      "name": "Savar",
+      "bn_name": "সাভার",
+      "areas": ["Savar Purusabha", "Amianbazar", "Hemayetpur", "Meghna Koloni"],
+      "bn_areas": ["সাভার পৌরসভা", "আমিনবাজার", "হেমায়েতপুর", "মেঘনা কলোনি"]
+    },
+    {
+      "upazila_id": 546,
+      "district_id": 47,
+      "name": "Ashulia",
+      "bn_name": "আশুলিয়া",
+      "areas": ["Ashulia", "Jamgar", "Baipeil", "Silipath Chol"],
+      "bn_areas": ["আশুলিয়া", "জামগড়া", "বাইপাইল", "শিল্পাঞ্চল কলোনি"]
+    },
+    {
+      "upazila_id": 366,
+      "district_id": 47,
+      "name": "Dhamrai",
+      "bn_name": "ধামরাই",
+      "areas": ["Dhamrai Purusabha", "Kalampur", "Amta", "Khaspatta Koloni"],
+      "bn_areas": ["ধামরাই পৌরসভা", "কালামপুর", "আমতা", "খাসপাটা কলোনি"]
+    },
+    {
+      "upazila_id": 549,
+      "district_id": 47,
+      "name": "Keraniganj Model",
+      "bn_name": "কেরানীগঞ্জ মডেল",
+      "areas": ["Keraniganj", "Jinjira", "Kalindi", "Model Koloni"],
+      "bn_areas": ["কেরানীগঞ্জ", "জিনজিরা", "কালিন্দি", "মডেল কলোনি"]
+    },
+    {
+      "upazila_id": 547,
+      "district_id": 47,
+      "name": "Dakshin Keraniganj",
+      "bn_name": "দক্ষিণ কেরানীগঞ্জ",
+      "areas": ["Dakshin Keraniganj", "Subhaada", "Agagan", "Sonakola Koloni"],
+      "bn_areas": ["দক্ষিণ কেরানীগঞ্জ", "শুভাড্যা", "আগানগর", "সোনাখালী কলোনি"]
+    },
+    {
+      "upazila_id": 368,
+      "district_id": 47,
+      "name": "Nawabganj",
+      "bn_name": "নবাবগঞ্জ",
+      "areas": ["Nawabganj Purusabha", "Joykrishna", "Bandura", "Koloni-7"],
+      "bn_areas": ["নবাবগঞ্জ পৌরসভা", "জয়কৃষ্ণপুর", "বান্দুরা", "কলোনি-৭"]
+    },
+    {
+      "upazila_id": 369,
+      "district_id": 47,
+      "name": "Dohar",
+      "bn_name": "দোহার",
+      "areas": ["Dohar Purusabha", "Muksudpur", "Karitikpur", "Khaspatta Koloni"],
+      "bn_areas": ["দোহার পৌরসভা", "মুকসুদপুর", "কার্তিকপুর", "খাসপাটা কলোনি"]
+    }
+  ]}
+] 

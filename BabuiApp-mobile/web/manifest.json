@@ -1,0 +1,9 @@
+{
+  "name": "Project Bolt",
+  "short_name": "Bolt",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "description": "A property search and chat platform for Bangladesh.",
+  "icons": []
+} 
