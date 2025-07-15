@@ -6,7 +6,7 @@ import divisionsData from '../data/bd-geocode/divisions.json';
 import districtsData from '../data/bd-geocode/districts.json';
 import upazilasData from '../data/bd-geocode/upazilas.json';
 import areasData from '../data/bd-geocode/area.json';
-import { getDivisions, getDistrictsByDivision, getUpazilasByDistrict, getAreasByUpazilaId } from '../utils/bangladeshLocationUtils';
+import { getDivisions, getDistrictsByDivision, getUpazilasByDistrict, getAreasByUpazilaId, extractData } from '../utils/bangladeshLocationUtils';
 
 const propertyTypes = [
   { value: '', label: 'Any Type' },
@@ -73,8 +73,10 @@ const amenitiesList = [
 
 export function BasicSearchFilters({ filters, onFiltersChange, onSearch, onShowAdvanced, showAdvanced }) {
   const divisionOptions = getDivisions();
-  const districtOptions = filters.division ? getDistrictsByDivision(filters.division) : [];
-  const thanaOptions = filters.district ? getUpazilasByDistrict(filters.district) : [];
+  const districts = extractData(districtsData);
+  const upazilas = extractData(upazilasData);
+  const districtOptions = filters.division ? getDistrictsByDivision(filters.division, districts) : [];
+  const thanaOptions = filters.district ? getUpazilasByDistrict(filters.district, upazilas) : [];
   const areaOptions = filters.thana ? getAreasByUpazilaId(filters.thana) : [];
 
   // Handlers to reset child fields
@@ -102,7 +104,7 @@ export function BasicSearchFilters({ filters, onFiltersChange, onSearch, onShowA
           onValueChange={handleDivisionChange}
         >
           <Picker.Item label="Select Division" value="" />
-          {divisionOptions.map(div => (
+          {divisionOptions.filter(div => div && div.id && div.name).map(div => (
             <Picker.Item key={div.id} label={div.name} value={div.id} />
           ))}
         </Picker>
@@ -116,7 +118,7 @@ export function BasicSearchFilters({ filters, onFiltersChange, onSearch, onShowA
           enabled={!!filters.division}
         >
           <Picker.Item label="Select District" value="" />
-          {districtOptions.map(dist => (
+          {districtOptions.filter(dist => dist && dist.id && dist.name).map(dist => (
             <Picker.Item key={dist.id} label={dist.name} value={dist.id} />
           ))}
         </Picker>
@@ -130,8 +132,8 @@ export function BasicSearchFilters({ filters, onFiltersChange, onSearch, onShowA
           enabled={!!filters.district}
         >
           <Picker.Item label="Select Thana/Area" value="" />
-          {thanaOptions.map(t => (
-            <Picker.Item key={t.id} label={t.name} value={t.id} />
+          {thanaOptions.filter(t => t && t.upazila_id && t.name).map(t => (
+            <Picker.Item key={t.upazila_id} label={t.name} value={t.upazila_id} />
           ))}
         </Picker>
       </View>
@@ -144,9 +146,15 @@ export function BasicSearchFilters({ filters, onFiltersChange, onSearch, onShowA
           enabled={!!filters.thana}
         >
           <Picker.Item label="Select Sub Area" value="" />
-          {areaOptions.map(a => (
-            <Picker.Item key={a.id} label={a.name} value={a.id} />
-          ))}
+          {areaOptions
+            .flatMap(a => (a.areas || []).map((areaName, idx) => ({
+              key: `${a.upazila_id}-${idx}`,
+              label: areaName,
+              value: areaName
+            })))
+            .map(opt => (
+              <Picker.Item key={opt.key} label={opt.label} value={opt.value} />
+            ))}
         </Picker>
       </View>
       <Text style={styles.sectionTitle}>Property Type</Text>

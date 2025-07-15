@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, Modal, TextInput } from 'react-native';
 import { BasicSearchFilters, AdvancedSearchFilters } from '../components/SearchFilters';
 import PropertyCard from '../components/PropertyCard';
 import { usePropertyStore } from '../stores/propertyStore';
@@ -7,6 +7,8 @@ import BottomNav from '../components/BottomNav';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import PropertiesMap from '../components/PropertiesMap';
+import { useAuthStore } from '../stores/authStore';
+import { supabase } from '../utils/supabaseClient';
 
 export default function HomeScreen({ navigation }) {
   const [viewMode, setViewMode] = useState('grid');
@@ -15,6 +17,65 @@ export default function HomeScreen({ navigation }) {
   const properties = usePropertyStore(state => state.properties);
   const fetchProperties = usePropertyStore(state => state.fetchProperties);
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
+  const user = useAuthStore(state => state.user);
+  const guestMode = useAuthStore(state => state.guestMode);
+  if (!user && guestMode) {
+    console.log('HomeScreen: Entered guest mode, user is not signed in.');
+  }
+  const openGlobalModal = useAuthStore(state => state.openGlobalModal);
+  const signOut = useAuthStore(state => state.signOut);
+  const [profileModalVisible, setProfileModalVisible] = useState(false);
+  const [authTab, setAuthTab] = useState('signIn');
+  // Auth form state
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [gender, setGender] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const setGuestMode = useAuthStore(state => state.setGuestMode);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
+
+  // Sign in handler
+  const handleSignIn = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) throw signInError;
+      setProfileModalVisible(false);
+      setEmail(''); setPassword('');
+    } catch (err) {
+      setError(err.message || 'Sign in failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Sign up handler
+  const handleSignUp = async () => {
+    setLoading(true);
+    setError('');
+    if (!name) { setError('Name is required'); setLoading(false); return; }
+    if (!gender) { setError('Gender is required'); setLoading(false); return; }
+    if (password !== confirmPassword) { setError('Passwords do not match'); setLoading(false); return; }
+    try {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { name, phone, gender } },
+      });
+      if (signUpError) throw signUpError;
+      setProfileModalVisible(false);
+      setEmail(''); setPassword(''); setConfirmPassword(''); setName(''); setPhone(''); setGender('');
+    } catch (err) {
+      setError(err.message || 'Sign up failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchProperties({}); // Fetch all on mount
@@ -47,6 +108,20 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.heroTitle}>Your Dream Nest</Text>
           <Text style={styles.heroSubtitle}>Find the perfect nest, crafted like a Babui bird</Text>
           <Text style={styles.heroDescription}>Inspired by nature's greatest architect</Text>
+          <TouchableOpacity
+            style={styles.profileIconBtn}
+            onPress={() => {
+              if (guestMode && !user) {
+                setGuestMode(false);
+              } else if (user) {
+                setShowSignOutModal(true);
+              } else {
+                openGlobalModal();
+              }
+            }}
+          >
+            <MaterialIcons name="account-circle" size={32} color="#fff" />
+          </TouchableOpacity>
         </View>
         <View style={styles.searchContainer}>
           <BasicSearchFilters
@@ -130,7 +205,30 @@ export default function HomeScreen({ navigation }) {
           showsVerticalScrollIndicator={false}
         />
       )}
-      <BottomNav navigation={navigation} active="Home" />
+      {(user || guestMode) && <BottomNav navigation={navigation} active="Home" />}
+      {showSignOutModal && (
+        <Modal
+          visible={showSignOutModal}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowSignOutModal(false)}
+        >
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.3)' }}>
+            <View style={{ backgroundColor: '#fff', borderRadius: 16, padding: 24, minWidth: 200 }}>
+              <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 16, color: '#FF9800', textAlign: 'center' }}>Account</Text>
+              <TouchableOpacity
+                style={{ backgroundColor: '#FF9800', borderRadius: 8, padding: 12, marginBottom: 8 }}
+                onPress={async () => { await signOut(); setShowSignOutModal(false); }}
+              >
+                <Text style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold' }}>Sign Out</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setShowSignOutModal(false)}>
+                <Text style={{ color: '#888', textAlign: 'center' }}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 }
@@ -261,5 +359,11 @@ const styles = StyleSheet.create({
     color: '#BDBDBD',
     textAlign: 'center',
     lineHeight: 20,
+  },
+  profileIconBtn: {
+    position: 'absolute',
+    top: 36, // was 24, increased further to lower the icon more
+    right: 16,
+    zIndex: 10,
   },
 }); 

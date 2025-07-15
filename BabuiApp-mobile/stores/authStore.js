@@ -4,20 +4,30 @@ import { supabase } from '../utils/supabaseClient';
 const initialState = {
   user: null,
   modalOpen: false,
+  globalModalOpen: false,
+  guestMode: false,
 };
 
 export const useAuthStore = create((set, get) => ({
   ...initialState,
 
-  setUser: (user) => set({ user }),
+  setUser: (user) => set({ user, guestMode: false }),
   
   openModal: () => set({ modalOpen: true }),
   
   closeModal: () => set({ modalOpen: false }),
+
+  openGlobalModal: () => set({ globalModalOpen: true }),
+  closeGlobalModal: () => set({ globalModalOpen: false }),
+
+  setGuestMode: (val) => set({ guestMode: val }),
   
-  signOut: async () => {
+  signOut: async (navigation) => {
     await supabase.auth.signOut();
     set({ user: null });
+    if (navigation) {
+      navigation.replace('SignIn');
+    }
   },
 
   addFavorite: (propertyId) => {
@@ -53,6 +63,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       favorites: [],
     });
     useAuthStore.getState().closeModal();
+    useAuthStore.getState().setGuestMode(false);
   }
   if (event === 'SIGNED_OUT') {
     useAuthStore.getState().setUser(null);

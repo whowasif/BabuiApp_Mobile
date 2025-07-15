@@ -1,8 +1,22 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { MaterialIcons, Ionicons, FontAwesome } from '@expo/vector-icons';
+import { useAuthStore } from '../stores/authStore';
 
 export default function BottomNav({ navigation, active }) {
+  const user = useAuthStore(state => state.user);
+  const guestMode = useAuthStore(state => state.guestMode);
+  const openGlobalModal = useAuthStore(state => state.openGlobalModal);
+  const setGuestMode = useAuthStore(state => state.setGuestMode);
+
+  const handleNav = (screen) => {
+    if ((guestMode && screen !== 'Home') || (!user && !guestMode && ['AddProperty', 'ChatList', 'Profile'].includes(screen))) {
+      setGuestMode(false);
+    } else {
+      navigation.navigate(screen);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.tab} onPress={() => navigation.navigate('Home')}>
@@ -10,15 +24,15 @@ export default function BottomNav({ navigation, active }) {
         <Text style={[styles.label, active === 'Home' && styles.activeLabel]}>Home</Text>
       </TouchableOpacity>
       {/* Remove Properties tab */}
-      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('AddProperty')}>
+      <TouchableOpacity style={styles.fab} onPress={() => handleNav('AddProperty')}>
         <Ionicons name="add-circle" size={48} color="#4CAF50" style={styles.fabIcon} />
         <Text style={styles.fabLabel}>Add</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.tab} onPress={() => navigation.navigate('Chat')}>
+      <TouchableOpacity style={styles.tab} onPress={() => handleNav('ChatList')}>
         <Ionicons name="chatbubble-ellipses" size={24} color={active === 'Chat' ? '#FF9800' : '#BDBDBD'} />
         <Text style={[styles.label, active === 'Chat' && styles.activeLabel]}>Chat</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.tab} onPress={() => navigation.navigate('Profile')}>
+      <TouchableOpacity style={styles.tab} onPress={() => handleNav('Profile')}>
         <FontAwesome name="user" size={24} color={active === 'Profile' ? '#FF9800' : '#BDBDBD'} />
         <Text style={[styles.label, active === 'Profile' && styles.activeLabel]}>Profile</Text>
       </TouchableOpacity>

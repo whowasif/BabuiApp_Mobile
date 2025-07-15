@@ -22,7 +22,7 @@ export const useChatStore = create((set, get) => ({
     try {
       const { data, error } = await supabase
         .from('chats')
-        .select('*')
+        .select('*, owner:owner_id (name_en, profile_picture_url), tenant:tenant_id (name_en, profile_picture_url)')
         .or(`owner_id.eq.${currentUser.id},tenant_id.eq.${currentUser.id}`)
         .order('updated_at', { ascending: false });
 

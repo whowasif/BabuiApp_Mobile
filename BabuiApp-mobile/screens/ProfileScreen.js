@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native';
 import BottomNav from '../components/BottomNav';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
@@ -7,6 +7,7 @@ import { useAuthStore } from '../stores/authStore';
 import { usePropertyStore } from '../stores/propertyStore';
 import { Switch, Alert } from 'react-native';
 import PropertyCard from '../components/PropertyCard';
+import { supabase } from '../utils/supabaseClient';
 
 const tabs = [
   { id: 'overview', label: 'Overview' },
@@ -24,6 +25,8 @@ const tabIcons = {
 
 export default function ProfileScreen({ navigation }) {
   const [activeTab, setActiveTab] = useState('overview');
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
   const user = useAuthStore(state => state.user);
   const signOut = useAuthStore(state => state.signOut);
   const addFavorite = useAuthStore(state => state.addFavorite);
@@ -36,14 +39,65 @@ export default function ProfileScreen({ navigation }) {
 
   useEffect(() => { fetchProperties(); }, []);
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setLoading(true);
+      try {
+        const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+        if (authError) throw authError;
+        const userId = authUser.id;
+        const { data, error: userError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', userId)
+          .single();
+        if (userError) throw userError;
+        setProfile(data);
+      } catch (err) {
+        setProfile(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      navigation.replace('SignIn');
+    }
+  }, [user]);
+
   const favoriteProperties = properties.filter(p => user?.favorites?.includes(p.id));
   const myProperties = properties.filter(p => p.landlord?.id === user?.id);
+
+  const renderProfileHeader = () => (
+    <View style={styles.profileHeader}>
+      <Image source={{ uri: profile?.profile_picture_url || 'https://randomuser.me/api/portraits/men/1.jpg' }} style={styles.avatar} />
+      <View style={{ alignItems: 'center', flex: 1 }}>
+        <Text style={styles.name}>{profile?.name_en || 'User Name'} <Text style={styles.verified}>✔</Text></Text>
+        {profile?.name_bn ? <Text style={styles.nameBn}>{profile.name_bn}</Text> : null}
+        <Text style={styles.location}>{profile?.location_en || 'Location'}{profile?.location_bn ? ` / ${profile.location_bn}` : ''}</Text>
+        <Text style={styles.email}>{profile?.email || 'Email'}</Text>
+        <Text style={styles.phone}>{profile?.phone || 'Phone'}</Text>
+        <Text style={styles.gender}>{profile?.gender ? `Gender: ${profile.gender}` : ''}</Text>
+      </View>
+    </View>
+  );
+
+  const renderProfileBio = () => (
+    <View style={styles.bioCard}>
+      {profile?.bio_en ? <Text style={styles.bioEn}>{profile.bio_en}</Text> : null}
+      {profile?.bio_bn ? <Text style={styles.bioBn}>{profile.bio_bn}</Text> : null}
+    </View>
+  );
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'overview':
         return (
           <View>
+            {renderProfileBio()}
             <View style={styles.statsRow}>
               <View style={styles.statCard}><MaterialIcons name="home" size={22} color="#4CAF50" /><Text style={styles.statNum}>{myProperties.length}</Text><Text style={styles.statLabel}>Properties</Text></View>
               <View style={styles.statCard}><MaterialIcons name="favorite" size={22} color="#E91E63" /><Text style={styles.statNum}>{user?.favorites?.length || 0}</Text><Text style={styles.statLabel}>Favorites</Text></View>
@@ -124,18 +178,22 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
+  const handleSignOut = () => {
+    signOut(navigation);
+  };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFF3E0' }}>
+        <ActivityIndicator size="large" color="#FF9800" />
+      </View>
+    );
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: '#FFF3E0' }}>
       <LinearGradient colors={["#FF9800", "#FFB300"]} style={{ paddingTop: 48, paddingBottom: 32, borderBottomLeftRadius: 32, borderBottomRightRadius: 32 }}>
-        <View style={styles.profileHeader}>
-          <Image source={{ uri: user?.avatar || 'https://randomuser.me/api/portraits/men/1.jpg' }} style={styles.avatar} />
-          <View style={{ alignItems: 'center' }}>
-            <Text style={styles.name}>{user?.name || 'User Name'} <Text style={styles.verified}>✔</Text></Text>
-            <Text style={styles.location}>{user?.location || 'Location'}</Text>
-            <Text style={styles.email}>{user?.email || 'Email'}</Text>
-            <Text style={styles.phone}>{user?.phone || 'Phone'}</Text>
-          </View>
-        </View>
+        {renderProfileHeader()}
         <TouchableOpacity style={styles.editBtn} onPress={() => navigation.navigate('EditProfile')}><Text style={styles.editBtnText}>Edit Profile</Text></TouchableOpacity>
         <View style={styles.tabsRow}>
           {tabs.map(tab => (
@@ -153,7 +211,11 @@ export default function ProfileScreen({ navigation }) {
       <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
         {renderTabContent()}
       </ScrollView>
-      <BottomNav navigation={navigation} active="Profile" />
+      {user && <BottomNav navigation={navigation} active="Profile" />}
+      <TouchableOpacity style={styles.signOutBtn} onPress={handleSignOut}>
+        <MaterialIcons name="logout" size={20} color="#fff" />
+        <Text style={styles.signOutBtnText}>Sign Out</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -194,6 +256,38 @@ const styles = StyleSheet.create({
   phone: {
     color: '#FFF3E0',
     fontSize: 13,
+  },
+  gender: {
+    color: '#FFF3E0',
+    fontSize: 13,
+    marginTop: 4,
+  },
+  nameBn: {
+    fontSize: 18,
+    color: '#FFF3E0',
+    marginTop: 2,
+  },
+  bioCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    margin: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  bioEn: {
+    fontSize: 16,
+    color: '#333',
+    lineHeight: 22,
+    marginBottom: 8,
+  },
+  bioBn: {
+    fontSize: 16,
+    color: '#333',
+    lineHeight: 22,
+    marginBottom: 8,
   },
   statsRow: {
     flexDirection: 'row',
@@ -340,5 +434,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     marginLeft: 10,
+  },
+  signOutBtn: {
+    backgroundColor: '#E53935',
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
+    margin: 16,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  signOutBtnText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginLeft: 8,
   },
 }); 

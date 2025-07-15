@@ -32,7 +32,7 @@ export default function PropertyDetailScreen({ navigation, route }) {
 
     try {
       const chatId = await createChat(propertyId, property?.landlord?.id || propertyId);
-      navigation.navigate('Chat', { chatId });
+      navigation.navigate('Message', { chatId });
     } catch (error) {
       Alert.alert('Error', 'Failed to start chat. Please try again.');
     }
@@ -246,7 +246,7 @@ export default function PropertyDetailScreen({ navigation, route }) {
         </View>
       </ScrollView>
 
-      <BottomNav navigation={navigation} active={null} />
+      {user && <BottomNav navigation={navigation} active="PropertyDetail" />}
     </View>
   );
 }

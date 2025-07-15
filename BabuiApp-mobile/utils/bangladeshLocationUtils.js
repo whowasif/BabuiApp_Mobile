@@ -4,8 +4,11 @@ import upazilasRaw from '../data/bd-geocode/upazilas.json';
 import areaData from '../data/bd-geocode/area.json';
 
 export function extractData(raw) {
-  const table = raw.find((item) => item.type === 'table');
-  return table && Array.isArray(table.data) ? table.data : [];
+  if (Array.isArray(raw)) {
+    const table = raw.find((item) => item.type === 'table');
+    return table && Array.isArray(table.data) ? table.data : [];
+  }
+  return [];
 }
 
 export const getDivisions = () => extractData(divisionsRaw);
@@ -16,14 +19,26 @@ export function getDistrictsByDivision(divisionId, districts) {
 }
 
 export function getUpazilasByDistrict(districtId, upazilas) {
-  if (!Array.isArray(upazilas)) return [];
-  return upazilas.filter(u => String(u.district_id) === String(districtId));
+  console.log('getUpazilasByDistrict: districtId', districtId, typeof districtId);
+  if (!districtId) return [];
+  // Robust normalization: find any key that looks like district_id
+  const normalizedUpazilas = upazilas.map(u => {
+    let districtIdValue = u.district_id;
+    if (districtIdValue === undefined) {
+      for (const key of Object.keys(u)) {
+        if (key.replace(/[^a-zA-Z]/g, '').toLowerCase() === 'districtid') {
+          districtIdValue = u[key];
+          break;
+        }
+      }
+    }
+    return { ...u, district_id: districtIdValue };
+  });
+  return normalizedUpazilas.filter(u => String(u.district_id) === String(districtId));
 }
 
 export const getAreasByUpazilaId = (upazilaId) => {
-  // areaData is a table structure, so we need to extract data
-  const areas = extractData(areaData);
-  return areas.filter((a) => String(a.upazila_id) === String(upazilaId));
+  return areaData.filter((a) => String(a.upazila_id) === String(upazilaId));
 };
 
-export const getAllAreas = () => extractData(areaData); 
+export const getAllAreas = () => areaData; 

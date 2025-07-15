@@ -11,6 +11,8 @@ import areasData from '../data/bd-geocode/area.json';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { MaterialIcons } from '@expo/vector-icons';
 import { getDivisions, getDistrictsByDivision, getUpazilasByDistrict, getAreasByUpazilaId, extractData } from '../utils/bangladeshLocationUtils';
+import { useAuthStore } from '../stores/authStore';
+import { useEffect } from 'react';
 
 const propertyTypes = ['Apartment', 'Room', 'Office', 'Shop', 'Parking'];
 const amenitiesList = ['Air Conditioning', 'Parking', 'Security', 'Elevator', 'Gas Connection', 'Generator', 'CCTV', 'Gym'];
@@ -48,18 +50,25 @@ export default function AddPropertyScreen({ navigation }) {
   const [parkingType, setParkingType] = useState('Bike');
   const [quantity, setQuantity] = useState('1');
 
+  const user = useAuthStore(state => state.user);
+  useEffect(() => {
+    if (!user) {
+      navigation.replace('SignIn');
+    }
+  }, [user]);
+
   // Filtered options
-  const divisionOptions = getDivisions();
+  const divisionOptions = extractData(divisionsData) || [];
+  console.log('divisionOptions:', divisionOptions);
   const districts = extractData(districtsRaw) || [];
   console.log('DEBUG districtsRaw:', districtsRaw);
   console.log('DEBUG extractData(districtsRaw):', extractData(districtsRaw));
   const districtOptions = division ? getDistrictsByDivision(division, districts) : [];
   const upazilas = extractData(upazilasData) || [];
-  console.log('Selected district:', district);
-  console.log('Upazilas array length:', upazilas.length);
-  console.log('Filtered thanaOptions:', thanaOptions);
   const thanaOptions = district ? getUpazilasByDistrict(district, upazilas) : [];
   const areaOptions = thana ? getAreasByUpazilaId(thana) : [];
+  console.log('DEBUG upazilas:', upazilas);
+  console.log('DEBUG thanaOptions:', thanaOptions);
 
   // Debug logs
   console.log('Selected division:', division);
@@ -75,9 +84,31 @@ export default function AddPropertyScreen({ navigation }) {
   };
 
   const handleImagePick = async () => {
+    if (images.length >= 10) {
+      alert('You can upload a maximum of 10 images.');
+      return;
+    }
     let result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsMultipleSelection: true, quality: 0.7 });
     if (!result.canceled) {
-      setImages([...images, ...result.assets.map(a => a.uri)]);
+      const newUris = result.assets.map(a => a.uri);
+      const total = images.length + newUris.length;
+      if (total > 10) {
+        alert('You can upload a maximum of 10 images.');
+        setImages([...images, ...newUris.slice(0, 10 - images.length)]);
+      } else {
+        setImages([...images, ...newUris]);
+      }
+    }
+  };
+
+  const handleCameraPick = async () => {
+    if (images.length >= 10) {
+      alert('You can upload a maximum of 10 images.');
+      return;
+    }
+    let result = await ImagePicker.launchCameraAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.7 });
+    if (!result.canceled) {
+      setImages([...images, ...result.assets.map(a => a.uri)].slice(0, 10));
     }
   };
 
@@ -174,7 +205,6 @@ export default function AddPropertyScreen({ navigation }) {
               style={styles.input}
             >
               <Picker.Item key="select-division" label="Select Division" value="" />
-              <Picker.Item key="test-division" label="Test Division" value="1" />
               {divisionOptions.map((div, idx) => (
                 <Picker.Item key={`${div.id}-${idx}`} label={div.name} value={div.id} />
               ))}
@@ -191,7 +221,7 @@ export default function AddPropertyScreen({ navigation }) {
               enabled={!!division}
             >
               <Picker.Item key="select-district" label="Select District" value="" />
-              {districtOptions.map((dist, idx) => (
+              {districtOptions.filter(dist => dist && dist.id && dist.name).map((dist, idx) => (
                 <Picker.Item key={`${dist.id}-${idx}`} label={dist.name} value={dist.id} />
               ))}
             </Picker>
@@ -206,8 +236,8 @@ export default function AddPropertyScreen({ navigation }) {
               enabled={!!district}
             >
               <Picker.Item key="select-thana" label="Select Thana" value="" />
-              {thanaOptions.map((t, idx) => (
-                <Picker.Item key={`${t.id}-${idx}`} label={t.name} value={t.id} />
+              {thanaOptions.filter(t => t && t.upazila_id && t.name).map((t, idx) => (
+                <Picker.Item key={`${t.upazila_id}-${idx}`} label={t.name} value={t.upazila_id} />
               ))}
             </Picker>
             <Text style={styles.label}>Area</Text>
@@ -218,9 +248,15 @@ export default function AddPropertyScreen({ navigation }) {
               enabled={!!thana}
             >
               <Picker.Item key="select-area" label="Select Area" value="" />
-              {areaOptions.map((a, idx) => (
-                <Picker.Item key={`${a.id}-${idx}`} label={a.name} value={a.id} />
-              ))}
+              {areaOptions
+                .flatMap(a => (a.areas || []).map((areaName, idx) => ({
+                  key: `${a.upazila_id}-${idx}`,
+                  label: areaName,
+                  value: areaName
+                })))
+                .map(opt => (
+                  <Picker.Item key={opt.key} label={opt.label} value={opt.value} />
+                ))}
             </Picker>
             <Text style={styles.label}>More Details about Location</Text>
             <TextInput style={styles.input} placeholder="E.g. Near main gate, beside mosque, 3rd floor, etc. (optional)" value={location} onChangeText={setLocation} />
@@ -399,7 +435,15 @@ export default function AddPropertyScreen({ navigation }) {
             {propertyTypeFields[propertyType].includes('images') && (
               <>
                 <Text style={styles.label}>Upload Images (Max 10)</Text>
-                <TouchableOpacity style={styles.imageUploadBtn} onPress={handleImagePick}><Text style={styles.imageUploadBtnText}>Choose Images</Text></TouchableOpacity>
+                <View style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
+                  <TouchableOpacity style={styles.imageUploadBtn} onPress={handleImagePick}>
+                    <Text style={styles.imageUploadBtnText}>Choose Images</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.imageUploadBtn} onPress={handleCameraPick}>
+                    <MaterialIcons name="photo-camera" size={20} color="#FF9800" />
+                    <Text style={styles.imageUploadBtnText}>Camera</Text>
+                  </TouchableOpacity>
+                </View>
                 {images.length > 0 && (
                   <ScrollView horizontal style={{ marginBottom: 16 }}>
                     {images.map((uri, idx) => (
@@ -465,7 +509,7 @@ export default function AddPropertyScreen({ navigation }) {
           </View>
         )}
       </ScrollView>
-      <BottomNav navigation={navigation} active="AddProperty" />
+      {user && <BottomNav navigation={navigation} active="AddProperty" />}
     </View>
   );
 }
