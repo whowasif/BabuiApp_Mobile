@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert, RefreshControl } from 'react-native';
 import BottomNav from '../components/BottomNav';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, Ionicons, FontAwesome } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ export default function PropertyDetailScreen({ navigation, route }) {
   const [property, setProperty] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   
   const { propertyId } = route.params || {};
   const getProperty = usePropertyStore(state => state.getProperty);
@@ -23,6 +24,20 @@ export default function PropertyDetailScreen({ navigation, route }) {
       setProperty(propertyData);
     }
   }, [propertyId]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      if (propertyId) {
+        const propertyData = getProperty(propertyId);
+        setProperty(propertyData);
+      }
+    } catch (error) {
+      console.error('Refresh error:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const handleContactOwner = async () => {
     if (!user) {
@@ -104,8 +119,15 @@ export default function PropertyDetailScreen({ navigation, route }) {
       </LinearGradient>
 
       <ScrollView 
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+        style={styles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#FF9800"]}
+            tintColor="#FF9800"
+          />
+        }
       >
         {/* Image Gallery */}
         <View style={styles.imageContainer}>

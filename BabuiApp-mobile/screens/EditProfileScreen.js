@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import BottomNav from '../components/BottomNav';
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '../utils/supabaseClient';
@@ -31,6 +31,7 @@ export default function EditProfileScreen({ navigation }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -57,6 +58,29 @@ export default function EditProfileScreen({ navigation }) {
     };
     fetchProfile();
   }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      // Re-fetch profile data
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (!authError) {
+        const userId = user.id;
+        const { data, error: userError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', userId)
+          .single();
+        if (!userError) {
+          setProfile(data);
+        }
+      }
+    } catch (error) {
+      console.error('Refresh error:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const pickImage = async () => {
     console.log('Opening image picker...');
@@ -138,7 +162,17 @@ export default function EditProfileScreen({ navigation }) {
       <LinearGradient colors={["#FF9800", "#FFB300"]} style={{ paddingTop: 48, paddingBottom: 24, borderBottomLeftRadius: 32, borderBottomRightRadius: 32 }}>
         <Text style={styles.header}>Edit Profile</Text>
       </LinearGradient>
-      <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 80 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#FF9800"]}
+            tintColor="#FF9800"
+          />
+        }
+      >
         <View style={styles.card}>
           <View style={styles.profilePicRow}>
             <TouchableOpacity onPress={pickImage}>

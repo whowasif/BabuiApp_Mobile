@@ -7,6 +7,7 @@ import districtsData from '../data/bd-geocode/districts.json';
 import upazilasData from '../data/bd-geocode/upazilas.json';
 import areasData from '../data/bd-geocode/area.json';
 import { getDivisions, getDistrictsByDivision, getUpazilasByDistrict, getAreasByUpazilaId, extractData } from '../utils/bangladeshLocationUtils';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const propertyTypes = [
   { value: '', label: 'Any Type' },
@@ -108,6 +109,14 @@ export function BasicSearchFilters({ filters, onFiltersChange, onSearch, onShowA
             <Picker.Item key={div.id} label={div.name} value={div.id} />
           ))}
         </Picker>
+        {filters.division && (
+          <TouchableOpacity 
+            style={styles.clearFieldBtn} 
+            onPress={() => onFiltersChange({ ...filters, division: '', district: '', thana: '', subArea: '' })}
+          >
+            <MaterialIcons name="clear" size={16} color="#FF9800" />
+          </TouchableOpacity>
+        )}
       </View>
       <Text style={styles.label}>District</Text>
       <View style={styles.pickerWrapper}>
@@ -122,6 +131,14 @@ export function BasicSearchFilters({ filters, onFiltersChange, onSearch, onShowA
             <Picker.Item key={dist.id} label={dist.name} value={dist.id} />
           ))}
         </Picker>
+        {filters.district && (
+          <TouchableOpacity 
+            style={styles.clearFieldBtn} 
+            onPress={() => onFiltersChange({ ...filters, district: '', thana: '', subArea: '' })}
+          >
+            <MaterialIcons name="clear" size={16} color="#FF9800" />
+          </TouchableOpacity>
+        )}
       </View>
       <Text style={styles.label}>Thana/Area</Text>
       <View style={styles.pickerWrapper}>
@@ -136,6 +153,14 @@ export function BasicSearchFilters({ filters, onFiltersChange, onSearch, onShowA
             <Picker.Item key={t.upazila_id} label={t.name} value={t.upazila_id} />
           ))}
         </Picker>
+        {filters.thana && (
+          <TouchableOpacity 
+            style={styles.clearFieldBtn} 
+            onPress={() => onFiltersChange({ ...filters, thana: '', subArea: '' })}
+          >
+            <MaterialIcons name="clear" size={16} color="#FF9800" />
+          </TouchableOpacity>
+        )}
       </View>
       <Text style={styles.label}>Sub Area</Text>
       <View style={styles.pickerWrapper}>
@@ -156,6 +181,14 @@ export function BasicSearchFilters({ filters, onFiltersChange, onSearch, onShowA
               <Picker.Item key={opt.key} label={opt.label} value={opt.value} />
             ))}
         </Picker>
+        {filters.subArea && (
+          <TouchableOpacity 
+            style={styles.clearFieldBtn} 
+            onPress={() => onFiltersChange({ ...filters, subArea: '' })}
+          >
+            <MaterialIcons name="clear" size={16} color="#FF9800" />
+          </TouchableOpacity>
+        )}
       </View>
       <Text style={styles.sectionTitle}>Property Type</Text>
       <View style={styles.pickerWrapper}>
@@ -168,6 +201,14 @@ export function BasicSearchFilters({ filters, onFiltersChange, onSearch, onShowA
             <Picker.Item key={option.value} label={option.label} value={option.value} />
           ))}
         </Picker>
+        {filters.type && (
+          <TouchableOpacity 
+            style={styles.clearFieldBtn} 
+            onPress={() => onFiltersChange({ ...filters, type: '' })}
+          >
+            <MaterialIcons name="clear" size={16} color="#FF9800" />
+          </TouchableOpacity>
+        )}
       </View>
       {(filters.type === 'apartment' || filters.type === 'room') && (
         <>
@@ -183,17 +224,35 @@ export function BasicSearchFilters({ filters, onFiltersChange, onSearch, onShowA
               <Picker.Item label="Bachelor" value="Bachelor" />
               <Picker.Item label="Sublet" value="Sublet" />
             </Picker>
+            {filters.priority && (
+              <TouchableOpacity 
+                style={styles.clearFieldBtn} 
+                onPress={() => onFiltersChange({ ...filters, priority: '' })}
+              >
+                <MaterialIcons name="clear" size={16} color="#FF9800" />
+              </TouchableOpacity>
+            )}
           </View>
         </>
       )}
       <Text style={styles.label}>Max Price</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Max Price"
-        keyboardType="numeric"
-        value={filters.maxPrice ? String(filters.maxPrice) : ''}
-        onChangeText={text => onFiltersChange({ ...filters, maxPrice: text ? Number(text) : undefined })}
-      />
+      <View style={styles.inputWrapper}>
+        <TextInput
+          style={styles.input}
+          placeholder="Max Price"
+          keyboardType="numeric"
+          value={filters.maxPrice ? String(filters.maxPrice) : ''}
+          onChangeText={text => onFiltersChange({ ...filters, maxPrice: text ? Number(text) : undefined })}
+        />
+        {filters.maxPrice && (
+          <TouchableOpacity 
+            style={styles.clearFieldBtn} 
+            onPress={() => onFiltersChange({ ...filters, maxPrice: undefined })}
+          >
+            <MaterialIcons name="clear" size={16} color="#FF9800" />
+          </TouchableOpacity>
+        )}
+      </View>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 16 }}>
         <TouchableOpacity style={styles.searchBtn} onPress={onSearch}>
           <Text style={styles.searchBtnText}>Search</Text>
@@ -340,44 +399,58 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFF3E0',
     borderRadius: 16,
-    padding: 16,
+    padding: 8,
     shadowColor: '#000',
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 2,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   sectionTitle: {
     color: '#FF9800',
     fontWeight: 'bold',
-    fontSize: 16,
-    marginTop: 16,
-    marginBottom: 8,
+    fontSize: 14,
+    marginTop: 8,
+    marginBottom: 4,
   },
   label: {
     color: '#FF9800',
     fontWeight: 'bold',
-    marginBottom: 4,
-    marginTop: 8,
+    marginBottom: 2,
+    marginTop: 4,
   },
   input: {
     backgroundColor: '#fff',
     borderRadius: 8,
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 4,
     fontSize: 14,
     color: '#333',
-    marginBottom: 8,
+    marginBottom: 4,
     borderWidth: 1,
     borderColor: '#FFE0B2',
   },
   pickerWrapper: {
     backgroundColor: '#fff',
     borderRadius: 8,
-    marginBottom: 8,
+    marginBottom: 4,
     borderWidth: 1,
     borderColor: '#FFE0B2',
     overflow: 'hidden',
+    position: 'relative',
+  },
+  inputWrapper: {
+    position: 'relative',
+    marginBottom: 4,
+  },
+  clearFieldBtn: {
+    position: 'absolute',
+    right: 8,
+    top: 8,
+    backgroundColor: '#FFF8E1',
+    borderRadius: 12,
+    padding: 4,
+    zIndex: 10,
   },
   row: {
     flexDirection: 'row',

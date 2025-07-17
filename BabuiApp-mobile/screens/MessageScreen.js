@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Image, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Image, StatusBar, RefreshControl } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useChatStore } from '../stores/chatStore';
 import { useAuthStore } from '../stores/authStore';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function MessageScreen({ route, navigation }) {
   const { chatId, otherUser, profilePictureUrl, isOnline } = route.params;
@@ -12,10 +13,23 @@ export default function MessageScreen({ route, navigation }) {
   const sendMessage = useChatStore(state => state.sendMessage);
   const [messageText, setMessageText] = useState('');
   const scrollViewRef = useRef();
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (chatId) fetchMessages(chatId);
   }, [chatId]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      // Refresh messages
+      await fetchMessages(chatId);
+    } catch (error) {
+      console.error('Refresh error:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!messageText.trim() || !chatId) return;
@@ -84,13 +98,18 @@ export default function MessageScreen({ route, navigation }) {
     return (
       <View key={item.id || idx} style={[styles.messageRowModern, isFromMe ? styles.messageRowMeModern : styles.messageRowOtherModern]}>
         {!isFromMe && (
-          profilePictureUrl ? (
-            <Image source={{ uri: profilePictureUrl }} style={styles.avatarImage} />
-          ) : (
-            <View style={styles.avatarBubbleModern}>
+          <LinearGradient
+            colors={['#FF9800', '#FFB300']}
+            style={styles.avatarBubbleModern}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            {profilePictureUrl ? (
+              <Image source={{ uri: profilePictureUrl }} style={styles.avatarImage} />
+            ) : (
               <Text style={styles.avatarBubbleTextModern}>{avatarText}</Text>
-            </View>
-          )
+            )}
+          </LinearGradient>
         )}
         <View style={[styles.messageBubbleModern, isFromMe ? styles.messageBubbleMeModern : styles.messageBubbleOtherModern]}>
           <Text style={[styles.messageTextModern, isFromMe ? styles.messageTextMeModern : styles.messageTextOtherModern]}>
@@ -104,13 +123,18 @@ export default function MessageScreen({ route, navigation }) {
           </View>
         </View>
         {isFromMe && (
-          user?.profile_picture_url ? (
-            <Image source={{ uri: user.profile_picture_url }} style={styles.avatarImage} />
-          ) : (
-            <View style={styles.avatarBubbleModern}>
+          <LinearGradient
+            colors={['#FF9800', '#FFB300']}
+            style={styles.avatarBubbleModern}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            {user?.profile_picture_url ? (
+              <Image source={{ uri: user.profile_picture_url }} style={styles.avatarImage} />
+            ) : (
               <Text style={styles.avatarBubbleTextModern}>{avatarText}</Text>
-            </View>
-          )
+            )}
+          </LinearGradient>
         )}
       </View>
     );
@@ -118,31 +142,50 @@ export default function MessageScreen({ route, navigation }) {
 
   return (
     <View style={styles.containerModern}>
-      <View style={styles.stickyChatHeader}>
+      <LinearGradient
+        colors={['#FF9800', '#FFB300', '#FFC107']}
+        style={styles.stickyChatHeader}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <MaterialIcons name="arrow-back" size={24} color="#FF9800" />
+          <MaterialIcons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        {profilePictureUrl ? (
-          <Image source={{ uri: profilePictureUrl }} style={styles.avatarImage} />
-        ) : (
-          <View style={styles.headerAvatarBubble}>
+        <LinearGradient
+          colors={['#FF9800', '#FFB300']}
+          style={styles.headerAvatarBubble}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          {profilePictureUrl ? (
+            <Image source={{ uri: profilePictureUrl }} style={styles.avatarImage} />
+          ) : (
             <Text style={styles.headerAvatarBubbleText}>{(otherUser || '?')[0].toUpperCase()}</Text>
-          </View>
-        )}
+          )}
+        </LinearGradient>
         <View style={styles.headerInfoModern}>
           <Text style={styles.headerNameModern}>{otherUser}</Text>
           {getOnlineStatus()}
         </View>
         <TouchableOpacity style={styles.headerMenu}>
-          <MaterialIcons name="more-vert" size={24} color="#FF9800" />
+          <MaterialIcons name="more-vert" size={24} color="#fff" />
         </TouchableOpacity>
-      </View>
+      </LinearGradient>
+      
       <KeyboardAvoidingView style={styles.messagesContainerModern} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           style={styles.messagesListModern}
           contentContainerStyle={{ paddingBottom: 60 }}
           ref={scrollViewRef}
           onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#FF9800"]}
+              tintColor="#FF9800"
+            />
+          }
         >
           {messages[chatId] && renderMessagesWithDates(messages[chatId])}
         </ScrollView>
@@ -177,22 +220,21 @@ export default function MessageScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   containerModern: {
     flex: 1,
-    backgroundColor: '#F7F8FA',
+    backgroundColor: '#F8F9FA',
   },
   stickyChatHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: 'rgba(255,255,255,0.2)',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 8,
-    paddingBottom: 8,
-    paddingHorizontal: 14,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
+    paddingBottom: 12,
+    paddingHorizontal: 16,
+    elevation: 8,
+    shadowColor: '#FF9800',
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
     zIndex: 10,
   },
   backButton: {
@@ -200,23 +242,25 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   headerAvatarBubble: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#FF9800',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
-    elevation: 2,
+    elevation: 4,
     shadowColor: '#FF9800',
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
   },
   headerAvatarBubbleText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 22,
+    textShadowColor: 'rgba(0,0,0,0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   headerInfoModern: {
     flex: 1,
@@ -224,26 +268,29 @@ const styles = StyleSheet.create({
   },
   headerNameModern: {
     fontWeight: 'bold',
-    color: '#222',
-    fontSize: 18,
+    color: '#fff',
+    fontSize: 20,
     letterSpacing: 0.2,
+    textShadowColor: 'rgba(0,0,0,0.1)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   headerMenu: {
     padding: 8,
   },
   messagesContainerModern: {
     flex: 1,
-    backgroundColor: '#F7F8FA',
+    backgroundColor: '#F8F9FA',
     borderTopWidth: 0,
   },
   messagesListModern: {
-    padding: 18,
+    padding: 20,
     flexGrow: 1,
   },
   messageRowModern: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   messageRowMeModern: {
     justifyContent: 'flex-end',
@@ -252,32 +299,38 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   avatarBubbleModern: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#FF9800',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 6,
-    elevation: 1,
+    marginHorizontal: 8,
+    elevation: 3,
+    shadowColor: '#FF9800',
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
   },
   avatarBubbleTextModern: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 15,
+    fontSize: 16,
+    textShadowColor: 'rgba(0,0,0,0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   messageBubbleModern: {
     maxWidth: '75%',
-    borderRadius: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-    marginHorizontal: 2,
-    marginBottom: 2,
-    elevation: 2,
+    borderRadius: 24,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    marginHorizontal: 4,
+    marginBottom: 4,
+    elevation: 4,
     shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
   },
   messageBubbleMeModern: {
     backgroundColor: '#FF9800',
@@ -291,7 +344,7 @@ const styles = StyleSheet.create({
   },
   messageTextModern: {
     fontSize: 16,
-    lineHeight: 22,
+    lineHeight: 24,
   },
   messageTextMeModern: {
     color: '#fff',
@@ -300,11 +353,11 @@ const styles = StyleSheet.create({
     color: '#222',
   },
   messageTimeModern: {
-    fontSize: 11,
-    marginTop: 6,
+    fontSize: 12,
+    marginTop: 8,
   },
   messageTimeMeModern: {
-    color: 'rgba(255,255,255,0.7)',
+    color: 'rgba(255,255,255,0.8)',
     textAlign: 'right',
   },
   messageTimeOtherModern: {
@@ -315,41 +368,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     backgroundColor: '#fff',
-    borderRadius: 30,
+    borderRadius: 32,
     margin: 16,
     marginBottom: 24,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    elevation: 4,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    elevation: 6,
     shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
   },
   inputIconBtn: {
-    padding: 6,
+    padding: 8,
     marginHorizontal: 2,
-    borderRadius: 20,
+    borderRadius: 24,
   },
   messageInputModern: {
     flex: 1,
-    backgroundColor: '#F7F8FA',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    maxHeight: 100,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 24,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    maxHeight: 120,
     fontSize: 16,
-    marginHorizontal: 6,
+    marginHorizontal: 8,
     color: '#222',
   },
   sendButtonModern: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 4,
-    elevation: 2,
+    marginLeft: 6,
+    elevation: 3,
   },
   sendButtonActive: {
     backgroundColor: '#FF9800',
@@ -358,26 +411,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
   },
   avatarImage: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     resizeMode: 'cover',
-    marginHorizontal: 6,
   },
   onlineStatus: {
     color: '#4CAF50',
-    fontSize: 13,
+    fontSize: 14,
     marginTop: 2,
     fontWeight: '500',
+    textShadowColor: 'rgba(0,0,0,0.1)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
   greenDot: {
     color: '#4CAF50',
-    fontSize: 16,
+    fontSize: 18,
     marginRight: 4,
   },
   offlineStatus: {
-    color: '#BDBDBD',
-    fontSize: 13,
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 14,
     marginTop: 2,
     fontWeight: '500',
   },
@@ -407,8 +462,8 @@ const styles = StyleSheet.create({
   dateSeparatorRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 16,
-    marginHorizontal: 10,
+    marginVertical: 20,
+    marginHorizontal: 12,
   },
   dateSeparatorLine: {
     flex: 1,
@@ -416,7 +471,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0E0E0',
   },
   dateSeparatorText: {
-    marginHorizontal: 10,
+    marginHorizontal: 12,
     fontSize: 14,
     color: '#BDBDBD',
     fontWeight: '500',

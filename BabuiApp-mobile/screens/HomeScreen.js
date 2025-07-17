@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, Modal, TextInput, Animated, RefreshControl, Alert } from 'react-native';
 import { BasicSearchFilters, AdvancedSearchFilters } from '../components/SearchFilters';
 import PropertyCard from '../components/PropertyCard';
 import { usePropertyStore } from '../stores/propertyStore';
 import BottomNav from '../components/BottomNav';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
-import PropertiesMap from '../components/PropertiesMap';
+import NativePropertiesMap from '../components/NativePropertiesMap';
 import { useAuthStore } from '../stores/authStore';
 import { supabase } from '../utils/supabaseClient';
 
@@ -24,6 +24,8 @@ export default function HomeScreen({ navigation }) {
   }
   const openGlobalModal = useAuthStore(state => state.openGlobalModal);
   const signOut = useAuthStore(state => state.signOut);
+  const toggleFavorite = useAuthStore(state => state.toggleFavorite);
+  const isFavorite = useAuthStore(state => state.isFavorite);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
   const [authTab, setAuthTab] = useState('signIn');
   // Auth form state
@@ -37,6 +39,28 @@ export default function HomeScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const setGuestMode = useAuthStore(state => state.setGuestMode);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await fetchProperties({});
+    } catch (error) {
+      console.error('Refresh error:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const [toggleAnim] = useState(new Animated.Value(viewMode === 'grid' ? 0 : 1));
+
+  useEffect(() => {
+    Animated.timing(toggleAnim, {
+      toValue: viewMode === 'grid' ? 0 : 1,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  }, [viewMode]);
 
   // Sign in handler
   const handleSignIn = async () => {
@@ -86,15 +110,17 @@ export default function HomeScreen({ navigation }) {
   const handleSearch = () => fetchProperties(filters);
   const handleApplyFilters = () => fetchProperties(filters);
 
+  const handleClearFilters = () => {
+    setFilters({});
+    fetchProperties({});
+  };
+
   const renderPropertyCard = ({ item }) => (
     <PropertyCard 
       property={item} 
       onPress={() => navigation.navigate('PropertyDetail', { propertyId: item.id })} 
-      onFavorite={() => {
-        // Handle favorite functionality
-        console.log('Favorite:', item.id);
-      }}
-      isFavorite={false}
+      onFavorite={() => toggleFavorite(item.id)}
+      isFavorite={isFavorite(item.id)}
     />
   );
 
@@ -111,8 +137,17 @@ export default function HomeScreen({ navigation }) {
           <TouchableOpacity
             style={styles.profileIconBtn}
             onPress={() => {
-              if (guestMode && !user) {
-                setGuestMode(false);
+              if (guestMode) {
+                // For guest mode, show options
+                Alert.alert(
+                  'Guest Mode',
+                  'You are currently in guest mode. What would you like to do?',
+                  [
+                    { text: 'Continue as Guest', style: 'cancel' },
+                    { text: 'Sign In', onPress: () => setGuestMode(false) },
+                    { text: 'Sign Up', onPress: () => setGuestMode(false) }
+                  ]
+                );
               } else if (user) {
                 setShowSignOutModal(true);
               } else {
@@ -144,32 +179,34 @@ export default function HomeScreen({ navigation }) {
         )}
       </LinearGradient>
       <View style={styles.resultsHeader}>
-        <View className={"resultsInfo"}>
+        <View style={styles.resultsInfo}>
           <Text style={styles.resultsCount}>{properties.length} Nests Found</Text>
           {Object.keys(filters).length > 0 && (
-            <Text style={styles.activeFilters}>Filters applied</Text>
+            <View style={styles.filterInfo}>
+              <Text style={styles.activeFilters}>Filters applied</Text>
+              <TouchableOpacity style={styles.clearFilterBtn} onPress={handleClearFilters}>
+                <MaterialIcons name="clear" size={16} color="#FF9800" />
+                <Text style={styles.clearFilterText}>Clear</Text>
+              </TouchableOpacity>
+            </View>
           )}
         </View>
-        <View style={styles.viewToggle}>
+        <View style={styles.resultsHeaderCenter}>
           <TouchableOpacity
-            style={[styles.toggleBtn, viewMode === 'grid' && styles.toggleBtnActive]}
+            style={[styles.switchBtn, viewMode === 'grid' ? styles.switchBtnActive : styles.switchBtnInactive]}
             onPress={() => setViewMode('grid')}
+            activeOpacity={0.85}
           >
-            <MaterialIcons 
-              name="grid-view" 
-              size={20} 
-              color={viewMode === 'grid' ? '#fff' : '#FF9800'} 
-            />
+            <MaterialIcons name="grid-view" size={20} color={viewMode === 'grid' ? '#fff' : '#FF9800'} />
+            <Text style={[styles.switchBtnLabel, { color: viewMode === 'grid' ? '#fff' : '#FF9800' }]}>Grid</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.toggleBtn, viewMode === 'map' && styles.toggleBtnActive]}
+            style={[styles.switchBtn, viewMode === 'map' ? styles.switchBtnActive : styles.switchBtnInactive, { marginLeft: 10 }]}
             onPress={() => setViewMode('map')}
+            activeOpacity={0.85}
           >
-            <MaterialIcons 
-              name="map" 
-              size={20} 
-              color={viewMode === 'map' ? '#fff' : '#FF9800'} 
-            />
+            <MaterialIcons name="map" size={20} color={viewMode === 'map' ? '#fff' : '#FF9800'} />
+            <Text style={[styles.switchBtnLabel, { color: viewMode === 'map' ? '#fff' : '#FF9800' }]}>Map</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -189,10 +226,17 @@ export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       {viewMode === 'map' ? (
-        <PropertiesMap
+        <NativePropertiesMap
           properties={properties}
           onSelect={setSelectedPropertyId}
           selectedPropertyId={selectedPropertyId}
+          initialRegion={{
+            latitude: 23.685, // Center of Bangladesh
+            longitude: 90.3563,
+            latitudeDelta: 2,
+            longitudeDelta: 2,
+          }}
+          setViewMode={setViewMode}
         />
       ) : (
         <FlatList
@@ -203,6 +247,14 @@ export default function HomeScreen({ navigation }) {
           ListHeaderComponent={renderHeader}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#FF9800"]}
+              tintColor="#FF9800"
+            />
+          }
         />
       )}
       {(user || guestMode) && <BottomNav navigation={navigation} active="Home" />}
@@ -268,14 +320,18 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     marginHorizontal: 16,
-    marginBottom: 0,
+    marginBottom: 8,
+    marginTop: 8,
     backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 10,
+    padding: 8,
     shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
+    maxWidth: 450,
+    width: '92%',
+    alignSelf: 'center',
   },
   advancedContainer: {
     marginHorizontal: 16,
@@ -311,6 +367,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginTop: 16,
   },
+  resultsHeaderCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
   resultsInfo: {
     flex: 1,
   },
@@ -324,20 +386,54 @@ const styles = StyleSheet.create({
     color: '#4CAF50',
     fontWeight: '500',
   },
-  viewToggle: {
+  filterInfo: {
     flexDirection: 'row',
-    borderRadius: 8,
-    overflow: 'hidden',
-    backgroundColor: '#FFE0B2',
+    alignItems: 'center',
+    marginTop: 4,
   },
-  toggleBtn: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+  clearFilterBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF8E1',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginLeft: 8,
+  },
+  clearFilterText: {
+    color: '#FF9800',
+    fontWeight: 'bold',
+    fontSize: 12,
+    marginLeft: 4,
+  },
+  switchBtn: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    minWidth: 64,
+    elevation: 2,
+    borderWidth: 1.5,
+    borderColor: '#FF9800',
+    backgroundColor: 'transparent',
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
   },
-  toggleBtnActive: {
+  switchBtnActive: {
     backgroundColor: '#FF9800',
+    borderColor: '#FF9800',
+  },
+  switchBtnInactive: {
+    backgroundColor: '#FFF8E1',
+    borderColor: '#FF9800',
+  },
+  switchBtnLabel: {
+    marginLeft: 6,
+    fontWeight: 'bold',
+    fontSize: 15,
   },
   listContainer: {
     paddingBottom: 80,
@@ -365,5 +461,15 @@ const styles = StyleSheet.create({
     top: 36, // was 24, increased further to lower the icon more
     right: 16,
     zIndex: 10,
+  },
+  gridViewBtn: {
+    position: 'absolute',
+    top: 220 , // moved lower for more comfortable gap
+    right: 24,
+    backgroundColor: '#FF9800',
+    borderRadius: 24,
+    padding: 10,
+    zIndex: 100,
+    elevation: 8,
   },
 }); 

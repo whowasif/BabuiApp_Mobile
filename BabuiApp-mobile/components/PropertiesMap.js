@@ -3,6 +3,7 @@ import { View, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const { height } = Dimensions.get('window');
+const MAP_HEIGHT = 350;
 
 export default function PropertiesMap({ properties, onSelect, selectedPropertyId }) {
   const webViewRef = useRef(null);
@@ -323,6 +324,194 @@ export default function PropertiesMap({ properties, onSelect, selectedPropertyId
     </html>
   `;
 
+  // Debug version of mapHtml with error display
+  const debugMapHtml = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BabuiApp Map</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@8.2.0/ol.css" type="text/css">
+        <script src="https://cdn.jsdelivr.net/npm/ol@8.2.0/dist/ol.js"></script>
+        <style>
+            body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+            #map { width: 100%; height: 100vh; position: relative; }
+            .error-message { color: red; font-weight: bold; font-size: 18px; background: #fff; padding: 10px; border-radius: 8px; position: absolute; top: 10px; left: 10px; z-index: 9999; }
+            .search-bar {
+                position: absolute;
+                top: 16px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 2000;
+                display: flex;
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+                padding: 4px 8px;
+                align-items: center;
+            }
+            .search-bar input {
+                border: none;
+                outline: none;
+                font-size: 16px;
+                padding: 6px 8px;
+                border-radius: 4px;
+                margin-right: 8px;
+            }
+            .search-bar button {
+                background: #FF9800;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                padding: 6px 14px;
+                font-size: 15px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            .search-bar button:hover {
+                background: #fb8c00;
+            }
+            .current-location-btn {
+                position: absolute;
+                bottom: 24px;
+                right: 24px;
+                z-index: 2000;
+                background: #fff;
+                border-radius: 50%;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+                width: 48px;
+                height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 2px solid #FF9800;
+                cursor: pointer;
+            }
+            .current-location-btn:hover {
+                background: #FFF3E0;
+            }
+            .current-location-icon {
+                font-size: 26px;
+                color: #FF9800;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <div class="search-bar">
+            <input id="searchInput" type="text" placeholder="Search place..." />
+            <button onclick="searchPlace()">Search</button>
+        </div>
+        <button class="current-location-btn" onclick="goToCurrentLocation()" title="Go to my location">
+            <span class="current-location-icon">📍</span>
+        </button>
+        <h1 id="fallback">Map Failed</h1>
+        <div id="error" class="error-message" style="display:none;"></div>
+        <script>
+            function showError(msg) {
+                document.getElementById('error').innerText = msg;
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('fallback').style.display = 'block';
+            }
+            window.onerror = function(msg, url, line, col, error) {
+                showError(msg + ' at ' + url + ':' + line + ':' + col);
+                return false;
+            };
+            try {
+                document.getElementById('fallback').style.display = 'none';
+                // OpenLayers map code
+                let map;
+                let properties = [];
+                let selectedPropertyId = null;
+                let popup = null;
+                let vectorSource;
+                let vectorLayer;
+                function initMap() {
+                    vectorSource = new ol.source.Vector();
+                    vectorLayer = new ol.layer.Vector({
+                        source: vectorSource,
+                        style: function(feature) {
+                            const isSelected = feature.get('id') === selectedPropertyId;
+                            return new ol.style.Style({
+                                image: new ol.style.Circle({
+                                    radius: isSelected ? 12 : 8,
+                                    fill: new ol.style.Fill({ color: isSelected ? '#FF9800' : '#4CAF50' }),
+                                    stroke: new ol.style.Stroke({ color: 'white', width: 2 })
+                                })
+                            });
+                        }
+                    });
+                    map = new ol.Map({
+                        target: 'map',
+                        layers: [
+                            new ol.layer.Tile({ source: new ol.source.OSM() }),
+                            vectorLayer
+                        ],
+                        view: new ol.View({
+                            center: ol.proj.fromLonLat([90.3563, 23.685]),
+                            zoom: 8
+                        }),
+                        controls: ol.control.defaults.defaults().extend([
+                            new ol.control.ScaleLine(),
+                            new ol.control.ZoomSlider()
+                        ])
+                    });
+                }
+                function searchPlace() {
+                    var query = document.getElementById('searchInput').value;
+                    if (!query) return;
+                    fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query))
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data && data.length > 0) {
+                                var lat = parseFloat(data[0].lat);
+                                var lon = parseFloat(data[0].lon);
+                                map.getView().animate({
+                                    center: ol.proj.fromLonLat([lon, lat]),
+                                    zoom: 14,
+                                    duration: 1000
+                                });
+                            } else {
+                                alert('Place not found!');
+                            }
+                        })
+                        .catch(err => {
+                            alert('Search error: ' + err.message);
+                        });
+                }
+                function goToCurrentLocation() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                            var lat = position.coords.latitude;
+                            var lon = position.coords.longitude;
+                            map.getView().animate({
+                                center: ol.proj.fromLonLat([lon, lat]),
+                                zoom: 15,
+                                duration: 1000
+                            });
+                        }, function(error) {
+                            alert('Could not get your location: ' + error.message);
+                        });
+                    } else {
+                        alert('Geolocation is not supported by this browser.');
+                    }
+                }
+                window.addEventListener('load', function() {
+                    try {
+                        initMap();
+                    } catch (e) {
+                        showError('Map init error: ' + e.message);
+                    }
+                });
+            } catch (e) {
+                showError('Outer error: ' + e.message);
+            }
+        </script>
+    </body>
+    </html>
+  `;
+
   return (
     <View style={styles.container}>
       {isLoading && (
@@ -332,7 +521,7 @@ export default function PropertiesMap({ properties, onSelect, selectedPropertyId
       )}
       <WebView
         ref={webViewRef}
-        source={{ html: mapHtml }}
+        source={{ html: debugMapHtml }}
         style={styles.webview}
         onMessage={handleMessage}
         onLoadEnd={handleLoadEnd}
@@ -348,10 +537,8 @@ export default function PropertiesMap({ properties, onSelect, selectedPropertyId
         showsVerticalScrollIndicator={false}
         originWhitelist={['*']}
         mixedContentMode="compatibility"
-        onError={(syntheticEvent) => {
-          const { nativeEvent } = syntheticEvent;
-          console.warn('WebView error: ', nativeEvent);
-        }}
+        onError={e => { console.log('WebView error:', e.nativeEvent); }}
+        onHttpError={e => { console.log('WebView HTTP error:', e.nativeEvent); }}
       />
     </View>
   );
@@ -361,14 +548,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    height: height * 0.5,
     borderRadius: 16,
     overflow: 'hidden',
     marginVertical: 8,
+    backgroundColor: '#e0e0e0', // debug background
   },
   webview: {
     flex: 1,
-    backgroundColor: 'transparent',
+    width: '100%',
+    backgroundColor: '#fffbe6', // debug background
   },
   loadingContainer: {
     position: 'absolute',

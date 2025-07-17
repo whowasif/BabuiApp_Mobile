@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const typeColors = {
@@ -17,6 +17,8 @@ const typeColors = {
 };
 
 export default function PropertyCard({ property, onPress, onFavorite, isFavorite }) {
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
+
   const formatPrice = (price) => {
     if (!price) return '৳0';
     return `৳${price.toLocaleString()}`;
@@ -27,6 +29,21 @@ export default function PropertyCard({ property, onPress, onFavorite, isFavorite
     return `${area} sq ft`;
   };
 
+  const handleFavoritePress = async () => {
+    if (favoriteLoading) return; // Prevent multiple clicks
+    
+    setFavoriteLoading(true);
+    try {
+      if (onFavorite) {
+        await onFavorite();
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    } finally {
+      setFavoriteLoading(false);
+    }
+  };
+
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <View style={styles.imageContainer}>
@@ -34,8 +51,20 @@ export default function PropertyCard({ property, onPress, onFavorite, isFavorite
           source={{ uri: property?.images?.[0]?.src || 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg' }}
           style={styles.image}
         />
-        <TouchableOpacity style={styles.favoriteBtn} onPress={onFavorite}>
-          <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={22} color={isFavorite ? '#E91E63' : '#BDBDBD'} />
+        <TouchableOpacity 
+          style={styles.favoriteBtn} 
+          onPress={handleFavoritePress}
+          disabled={favoriteLoading}
+        >
+          {favoriteLoading ? (
+            <ActivityIndicator size="small" color="#E91E63" />
+          ) : (
+            <MaterialIcons 
+              name={isFavorite ? 'favorite' : 'favorite-border'} 
+              size={22} 
+              color={isFavorite ? '#E91E63' : '#BDBDBD'} 
+            />
+          )}
         </TouchableOpacity>
         {property?.available === false && (
           <View style={styles.rentedBadge}>
